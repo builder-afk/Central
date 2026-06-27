@@ -1,0 +1,500 @@
+--- /Users/kunalverma/Downloads/Builder/houseverse/app/layout
++++ /Users/kunalverma/Downloads/Builder/houseverse/app/layout
+@@ -25,23 +25,23 @@
+ });
+ 
+ export const metadata: Metadata = {
+-  title: "HouseVerse AI — Walk Through Any House Before It's Built",
++  title: "Builder's Central — Property Marketing Infrastructure for Builders",
+   description:
+-    "Transform architectural plans into immersive 3D walkthroughs. Upload, generate, explore, share, and collaborate on stunning property visualizations powered by AI.",
++    "3D tours, microsites, virtual staging, analytics & lead capture — the complete property marketing platform for builders and real estate developers.",
+   keywords: [
+-    "3D house walkthrough",
+-    "virtual property tour",
+-    "architectural visualization",
+-    "AI interior design",
+-    "real estate technology",
+-    "digital twin",
+-    "3D floor plan",
++    "property marketing",
++    "builder marketing tools",
++    "3D property tours",
++    "real estate SaaS",
++    "virtual staging",
++    "property microsites",
++    "developer marketing platform",
+   ],
+   openGraph: {
+-    title: "HouseVerse AI — Walk Through Any House Before It's Built",
++    title: "Builder's Central — Property Marketing Infrastructure for Builders",
+     description:
+-      "Transform architectural plans into immersive 3D walkthroughs. Upload, generate, explore, share, and collaborate.",
+-    siteName: "HouseVerse AI",
++      "3D tours, microsites, virtual staging, analytics & lead capture — the complete property marketing platform for builders and real estate developers.",
++    siteName: "Builder's Central",
+     type: "website",
+   },
+ };
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/app/page
++++ /Users/kunalverma/Downloads/Builder/houseverse/app/page
+@@ -2,10 +2,8 @@
+ 
+ import dynamic from "next/dynamic";
+ import Navbar from "@/components/landing/Navbar";
+-import ExploreCategories from "@/components/landing/ExploreCategories";
+ import Features from "@/components/landing/Features";
+ import Services from "@/components/landing/Services";
+-import Builders from "@/components/landing/Builders";
+ import CustomerStories from "@/components/landing/CustomerStories";
+ import FAQ from "@/components/landing/FAQ";
+ import Footer from "@/components/landing/Footer";
+@@ -34,10 +34,8 @@
+     <main className="bg-[#F5F5F5]">
+       <Navbar />
+       <Hero />
+-      <ExploreCategories />
+       <Features />
+       <Services />
+-      <Builders />
+       <CustomerStories />
+       <FAQ />
+       <Footer />
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Navbar
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Navbar
+@@ -40,8 +40,8 @@
+   useEffect(() => {
+     const updateTime = () => {
+       const now = new Date();
+-      const options = { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false } as const;
+-      setTime(now.toLocaleTimeString('en-GB', options));
++      const options = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false } as const;
++      setTime(now.toLocaleTimeString('en-IN', options));
+     };
+     updateTime();
+     const interval = setInterval(updateTime, 1000);
+@@ -48,9 +48,9 @@
+   }, []);
+ 
+   const navLinks = [
+-    { label: "Properties", href: "/explore" },
+-    { label: "Builders", href: "/builders" },
+-    { label: "Our Services", href: "/services" },
++    { label: "Platform", href: "/#features" },
++    { label: "Services", href: "/services" },
++    { label: "Pricing", href: "/services#pricing" },
+     { label: "Contact", href: "/#contact" },
+   ];
+ 
+@@ -77,11 +77,11 @@
+           <div className="flex items-center gap-4 lg:gap-6 border-l border-[#50372b]/10 pl-6 pr-1 py-1">
+             <div className="flex items-center gap-2">
+               <Clock className="w-3.5 h-3.5 text-[#50372b]/60" />
+-              <span className="text-[13px] text-[#50372b]/70 font-medium hidden lg:inline">{time} in London</span>
++              <span className="text-[13px] text-[#50372b]/70 font-medium hidden lg:inline">{time} in India</span>
+               <span className="text-[13px] text-[#50372b]/70 font-medium lg:hidden">{time}</span>
+             </div>
+-            <Link href="/services">
+-              <AnimatedButton text="List Property" className="bg-[#50372b] text-white hidden lg:flex hover:bg-[#624334]" iconColor="text-[#50372b]" />
++            <Link href="/#contact">
++              <AnimatedButton text="Book a Demo" className="bg-[#50372b] text-white hidden lg:flex hover:bg-[#624334]" iconColor="text-[#50372b]" />
+             </Link>
+           </div>
+         </div>
+@@ -157,7 +157,7 @@
+           <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-gray-600 text-sm font-medium">
+                 <Clock className="w-4 h-4" />
+-                <span>{time} in London</span>
++                <span>{time} in India</span>
+              </div>
+              <button onClick={() => setIsMenuOpen(false)} className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"><X className="w-5 h-5"/></button>
+           </div>
+@@ -171,8 +171,8 @@
+             <Link href="/auth/login" className="text-center font-medium text-gray-600 hover:text-gray-900 py-2">
+               Log In
+             </Link>
+-            <Link href="/services" onClick={() => setIsMenuOpen(false)}>
+-              <AnimatedButton text="List Property" className="bg-[#F26522] text-white w-full py-3 pl-6" iconColor="text-[#F26522]" />
++            <Link href="/#contact" onClick={() => setIsMenuOpen(false)}>
++              <AnimatedButton text="Book a Demo" className="bg-[#F26522] text-white w-full py-3 pl-6" iconColor="text-[#F26522]" />
+             </Link>
+           </div>
+         </div>
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Features
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Features
+@@ -11,10 +11,10 @@
+           <path d="M4 6.47 5.76 10H20v8H4V6.47M22 4h-4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.89-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4Z" />
+         </svg>
+       ),
+-      tags: ["Flats", "Villas", "Penthouses"],
+-      title: "Immersive 360° Walkthroughs.",
+-      description:
+-        "Tour premium properties from your screen before booking a visit. Experience true scale, lighting, and layout.",
++      tags: ["Projects", "Walkthroughs", "Embeddable"],
++      title: "3D Property Showcases.",
++      description:
++        "Transform every project into a web-based walkthrough your buyers can tour from anywhere — before a single site visit.",
+       image: "/capabilities/walkthrough.png",
+     },
+     {
+@@ -22,10 +22,10 @@
+           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+         </svg>
+       ),
+-      tags: ["Top Developers", "Reviews", "Track Record"],
+-      title: "Verified Builder Portfolios.",
+-      description:
+-        "Discover and connect with top-rated developers. View their past projects and current listings in one place.",
++      tags: ["Custom URLs", "Lead Capture", "Branding"],
++      title: "Property Microsites.",
++      description:
++        "Launch a branded, dedicated website for every project in minutes — 3D tour, gallery, brochure, floor plan, location map, and lead capture, all in one link.",
+       image: "/capabilities/builders.png",
+     },
+     {
+@@ -33,10 +33,10 @@
+           <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+         </svg>
+       ),
+-      tags: ["Drone", "LiDAR", "Post-Processing"],
+-      title: "Premium 360° Tour Services.",
+-      description:
+-        "For Builders: We turn your physical properties into stunning interactive virtual experiences for our marketplace.",
++      tags: ["Real-time", "Heatmaps", "CRM-ready"],
++      title: "Analytics & Lead Intelligence.",
++      description:
++        "Know which rooms buyers linger on, which units get the most attention, and capture qualified leads at the perfect moment — inside the tour itself.",
+       image: "/capabilities/drone-tour.png",
+     },
+   ];
+@@ -46,7 +46,7 @@
+         {/* Badge Row */}
+         <div className="px-5 sm:px-8 lg:px-12 flex items-center gap-3 mb-6 sm:mb-8">
+           <div className="text-[12px] font-mono uppercase tracking-widest border border-[#ebebeb] rounded-full px-4 py-1.5 text-[#171717] bg-[#fafafa] shadow-[0px_1px_1px_#00000005]">
+-            CAPABILITIES
++            PLATFORM
+           </div>
+         </div>
+ 
+@@ -53,6 +53,6 @@
+         <div className="px-5 sm:px-8 lg:px-12">
+           <h2 className="text-[#171717] font-heading italic leading-[1.05] tracking-[-0.03em] text-[clamp(2rem,6vw,3.5rem)] mb-12 sm:mb-16 lg:mb-20 max-w-[900px]">
+-            The new way to discover real estate.
++            Everything you need to market properties digitally.
+           </h2>
+         </div>
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Services
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Services
+@@ -20,7 +20,7 @@
+     number: "01",
+     title: "Immersive 3D Property Tours",
+     description:
+-      "Full walkthroughs with room-to-room navigation, interactive hotspots, and web-based access — all before a single site visit.",
++      "Give your buyers a complete walkthrough experience — embedded on your site or shared as a standalone link.",
+     highlights: ["Room navigation", "Hotspots", "Mobile-ready"],
+     color: "#F26522",
+     bgAccent: "rgba(242, 101, 34, 0.06)",
+@@ -31,7 +31,7 @@
+     number: "02",
+     title: "Interactive Floor Plans",
+     description:
+-      "Clickable, living floor plans that replace static PDFs. Buyers tap a room to see dimensions, photos, and real-time info.",
++      "Replace static PDF brochures with clickable, living floor plans that let buyers explore room-by-room.",
+     highlights: ["Clickable rooms", "Measurements", "Live data"],
+     color: "#06b6d4",
+     bgAccent: "rgba(6, 182, 212, 0.06)",
+@@ -42,7 +42,7 @@
+     number: "03",
+     title: "Property Microsites",
+     description:
+-      "Dedicated branded websites for each project — 3D showcase, gallery, brochure, location map, and lead forms in one URL.",
++      "Launch a dedicated, branded website for every project — gallery, 3D tour, brochure, location, and lead form.",
+     highlights: ["Custom URL", "Lead capture", "Branding"],
+     color: "#10b981",
+     bgAccent: "rgba(16, 185, 129, 0.06)",
+@@ -53,7 +53,7 @@
+     number: "04",
+     title: "Virtual Staging & AI Visualization",
+     description:
+-      "AI-powered transformations — empty rooms to furnished, construction sites to finished projects. Sell the vision, not just the state.",
++      "Sell the dream b
+<truncated 1192 bytes>
+158, 11, 0.06)",
+@@ -130,12 +130,12 @@
+           className="mb-12 sm:mb-16 lg:mb-20"
+         >
+           <h2 className="text-[#50372b] font-heading italic leading-[1.05] tracking-[-0.03em] text-[clamp(2.2rem,6vw,4rem)] max-w-[800px]">
+-            Everything you need to sell properties{" "}
+-            <span className="text-[#F26522]">faster.</span>
++            The complete property marketing{" "}
++            <span className="text-[#F26522]">stack.</span>
+           </h2>
+           <p className="text-[#50372b]/55 text-[16px] sm:text-[17px] leading-relaxed mt-5 max-w-[560px]">
+-            From immersive 3D walkthroughs and AI visualization to analytics
+-            dashboards — the complete digital toolkit for modern real estate.
++            From 3D walkthroughs and interactive floor plans to AI-powered
++            staging and conversion analytics — built for developers who want to sell faster.
+           </p>
+         </motion.div>
+ 
+@@ -238,14 +238,14 @@
+             href="/services"
+             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#50372b] text-white text-[14px] font-medium hover:bg-[#624334] transition-all duration-300 hover:translate-y-[-1px] shadow-md"
+           >
+-            Explore All Services
++            See All Services
+             <ArrowRight className="w-4 h-4" />
+           </Link>
+           <Link
+-            href="/services#pricing"
++            href="/#contact"
+             className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-[#50372b]/10 text-[#50372b]/70 text-[14px] font-medium hover:border-[#50372b]/25 hover:text-[#50372b] transition-all duration-300 bg-white"
+           >
+-            View Pricing
++            Get a Quote
+           </Link>
+         </motion.div>
+       </div>
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/CustomerStories
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/CustomerStories
+@@ -22,10 +22,10 @@
+ const stories: Story[] = [
+   {
+     name: "Rajesh Sharma",
+-    role: "Real Estate Developer",
++    role: "VP Marketing",
+     company: "Prestige Group",
+     quote:
+-      "HouseVerse AI transformed how we sell pre-construction projects. Buyers walk through properties before a single brick is laid. Conversion rate jumped 40%. The immersive experience makes buyers confident about their purchase decisions even before the project is completed.",
++      "Builder's Central transformed how we market pre-construction projects. Buyers tour properties before a single brick is laid. Our conversion rate jumped 40% and site visits dropped by half — we only get serious, qualified buyers now.",
+     avatar: "RS",
+     metric: "+40%",
+     metricLabel: "Conversion Rate",
+@@ -36,13 +36,13 @@
+   },
+   {
+     name: "Ananya Mehta",
+-    role: "Principal Architect",
+-    company: "Studio AM Design",
+-    quote:
+-      "I used to spend weeks creating 3D renders. Now I upload a floor plan and have an immersive walkthrough in minutes. My clients are blown away every single time. It's revolutionized our design presentation workflow completely.",
++    role: "Head of Sales",
++    company: "Godrej Properties",
++    quote:
++      "We’ve standardized Builder’s Central across all our projects. The consistency and quality of 3D tours is unmatched — our sales team closes deals faster because buyers arrive fully informed.",
+     avatar: "AM",
+-    metric: "10x",
+-    metricLabel: "Faster Renders",
++    metric: "12",
++    metricLabel: "Projects Live",
+     rating: 5,
+     accent: "#F26522",
+     accentLight: "rgba(242, 101, 34, 0.06)",
+@@ -50,10 +50,10 @@
+   },
+   {
+<truncated 5319 bytes>
+  company: "Tata Housing",
++    quote: "Builder’s Central replaced our entire visualization workflow. Faster, cheaper, and buyers can walk through designs before we break ground.",
++    metric: "5 days",
++    metricLabel: "to go live",
+     rating: 4,
+   },
+ ];
+@@ -141,7 +141,7 @@
+ const stats = [
+   { icon: TrendingUp, value: "40%", label: "Avg. conversion lift" },
+-  { icon: Users, value: "500+", label: "Builders onboarded" },
+-  { icon: Award, value: "4.9/5", label: "Average rating" },
++  { icon: Users, value: "200+", label: "Projects live" },
++  { icon: Award, value: "85%", label: "Fewer site visits" },
+ ];
+ 
+ function MarqueeCard({
+@@ -216,7 +216,7 @@
+         {/* Badge Row */}
+         <div className="px-5 sm:px-8 lg:px-12 flex items-center justify-center gap-3 mb-6 sm:mb-8">
+           <div className="text-[12px] font-mono uppercase tracking-widest border border-[#ebebeb] rounded-full px-4 py-1.5 text-[#171717] bg-white shadow-[0px_1px_1px_#00000005]">
+-            TESTIMONIALS
++            CASE STUDIES
+           </div>
+         </div>
+ 
+@@ -226,11 +226,11 @@
+           className="text-center mb-10 sm:mb-14 px-5 sm:px-8 lg:px-12"
+         >
+           <h2 className="text-[#171717] font-heading italic leading-[1.05] tracking-[-0.03em] text-[clamp(2rem,6vw,3.5rem)] max-w-[900px] mx-auto mb-4">
+-            Trusted by industry leaders.
++            Trusted by India&apos;s top developers.
+           </h2>
+           <p className="text-[#4d4d4d] text-[16px] max-w-[480px] mx-auto">
+-            See how builders, architects, and homebuyers are transforming
+-            real estate with immersive virtual tours.
++            See how leading builders are using Builder&apos;s Central to transform
++            their project marketing.
+           </p>
+         </motion.div>
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/FAQ
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/FAQ
+@@ -6,34 +6,34 @@
+ 
+ const faqs = [
+   {
+-    question: "How do I book an on-site visit for a property?",
+-    answer:
+-      "Once you find a property you love in our 360° virtual tour, simply click the 'Book Visit' button on the listing page. You can choose an available time slot that works for you, and the builder's sales team will confirm your appointment.",
+-  },
+-  {
+-    question: "Are the builders on HouseVerse verified?",
+-    answer:
+-      "Yes. Every builder on our platform goes through a rigorous vetting process. We verify their legal standing, past project delivery records, and customer reviews before they can list properties on HouseVerse.",
+-  },
+-  {
+-    question: "How accurate are the 360° virtual tours?",
+-    answer:
+-      "Our virtual tours are created using professional-grade 360° cameras and LiDAR scanning technology. They provide an exact, 1:1 scale representation of the property's layout, lighting, and finishes.",
+-  },
+-  {
+-    question: "I'm a builder. How can I get my properties listed?",
+-    answer:
+-      "We offer comprehensive 360° tour creation services for builders. Choose one of our service packages, and our professional team will visit your site, capture the property, and publish it directly to the HouseVerse marketplace. Contact our sales team to get started.",
+-  },
+-  {
+-    question: "Do you offer virtual tours for pre-construction properties?",
+-    answer:
+-      "Yes! For our Developer Portfolio partners, we can take your architectural CAD files and generate high-fidelity, interactive 3D virtual tours of properties that haven't been built yet.",
+-  },
+-  {
+-    question: "Is it free to browse properties?",
+-    answer:
+-      "Abs
+<truncated 479 bytes>
+D walkthrough, interactive floor plans, and a branded microsite — within 5 business days.",
++  },
++  {
++    question: "What's included in a project setup?",
++    answer:
++      "Every project includes a web-based 3D walkthrough, interactive floor plans, a dedicated property microsite with your branding, gallery, brochure download, location map, and integrated lead capture forms. Premium packages add drone footage, virtual staging, and analytics dashboards.",
++  },
++  {
++    question: "Can I embed tours on my own website?",
++    answer:
++      "Absolutely. Every 3D tour comes with an embed code you can drop into any website. It works on all devices — desktop, tablet, and mobile — with no plugins required. You can also share via a direct link or QR code.",
++  },
++  {
++    question: "How long does it take to go live?",
++    answer:
++      "From on-site capture to delivery, most projects go live within 5 business days. For pre-construction projects using architectural plans, timelines depend on the complexity of the renders, but typically range from 7–10 business days.",
++  },
++  {
++    question: "Do you support pre-construction / under-development projects?",
++    answer:
++      "Yes — this is one of our strongest capabilities. We take your architectural CAD files and floor plans and generate photorealistic 3D walkthroughs and renders of properties that haven't been built yet, so you can start marketing and collecting leads early.",
++  },
++  {
++    question: "What does pricing look like?",
++    answer:
++      "We offer flexible packages starting from ₹10,000 for starter tours, ₹25,000–50,000 for professional packages with microsites and floor plans, and custom enterprise pricing for large-scale developments. Contact our team for a tailored quote.",
+   },
+ ];
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/FAQ
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/FAQ
+@@ -133,7 +133,7 @@
+             Frequently asked questions.
+           </h2>
+           <p className="text-[18px] text-[#4d4d4d] max-w-md mx-auto font-normal">
+-            Everything you need to know about HouseVerse AI.
++            Common questions from builders and developers.
+           </p>
+         </motion.div>
+
+--- /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Footer
++++ /Users/kunalverma/Downloads/Builder/houseverse/components/landing/Footer
+@@ -4,19 +4,19 @@
+ import { Globe, Code2, Briefcase, Play, Mail, ArrowRight } from "lucide-react";
+ 
+ const footerLinks = {
+-  Product: [
+-    { label: "Features", href: "#features" },
+-    { label: "Pricing", href: "#pricing" },
+-    { label: "3D Viewer", href: "/viewer/demo" },
+-    { label: "AI Designer", href: "#features" },
+-    { label: "Changelog", href: "#" },
++  Platform: [
++    { label: "3D Tours", href: "/services" },
++    { label: "Microsites", href: "/services" },
++    { label: "Analytics", href: "/services" },
++    { label: "Virtual Staging", href: "/services" },
++    { label: "Pricing", href: "/services#pricing" },
+   ],
+   Resources: [
+-    { label: "Documentation", href: "#" },
+-    { label: "API Reference", href: "#" },
++    { label: "Case Studies", href: "#stories" },
+     { label: "Blog", href: "#" },
+-    { label: "Tutorials", href: "#" },
+     { label: "Help Center", href: "#" },
++    { label: "Tutorials", href: "#" },
++    { label: "API Docs", href: "#" },
+   ],
+   Company: [
+     { label: "About", href: "#" },
+@@ -23,5 +23,5 @@
+     { label: "Press", href: "#" },
+-    { label: "Contact", href: "#" },
++    { label: "Contact", href: "/#contact" },
+     { label: "Partners", href: "#" },
+   ],
+   Legal: [
+@@ -61,15 +61,15 @@
+       <div className="relative py-24 sm:py-32 mb-8 bg-[#F5F5F5]">
+         <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 text-center">
+           <h3 className="text-gray-900 font-heading italic leading-[1.05] tracking-[-0.03em] text-[clamp(2rem,6vw,3.8rem)] mb-6">
+-            Ready to list your <br className="hidden sm:block" />property with us?
++            Ready to transform how you <br className="hidden sm:bloc
+<truncated 976 bytes>
+      text="Schedule Demo" 
++            <Link href="/services#pricing">
++               <AnimatedButton 
++                 text="See Pricing" 
+                  className="bg-white border border-gray-200 text-gray-900 hover:border-gray-400 w-full sm:w-auto" 
+                  iconBg="bg-gray-100"
+                />
+@@ -91,16 +91,15 @@
+             <Link href="/" className="flex items-center gap-2.5 mb-6">
+               <div className="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center">
+                 <span className="font-heading italic text-white text-[15px] font-bold leading-none mt-0.5">
+-                  h
++                  b
+                 </span>
+               </div>
+               <span className="font-heading italic font-bold text-[18px] text-gray-900 tracking-tight">
+-                HouseVerse
++                Builder&apos;s Central
+               </span>
+             </Link>
+             <p className="text-[14px] text-gray-500 mb-8 leading-relaxed max-w-[240px] font-medium">
+-              The future of property visualization. Walk through any house
+-              before it&apos;s built.
++              Property marketing infrastructure for builders &amp; developers.
+             </p>
+ 
+             {/* Newsletter */}
+@@ -142,7 +142,7 @@
+         {/* Bottom bar */}
+         <div className="pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-6">
+           <p className="text-[12px] font-medium text-gray-400 uppercase tracking-wide">
+-            © {new Date().getFullYear()} HOUSEVERSE AI. ALL RIGHTS RESERVED.
++            © {new Date().getFullYear()} BUILDER&apos;S CENTRAL. ALL RIGHTS RESERVED.
+           </p>
+           <div className="flex items-center gap-3">
+             {socials.map((social) => (
+
