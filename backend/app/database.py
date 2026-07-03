@@ -21,6 +21,8 @@ TORTOISE_ORM = {
                 "app.models.builder",
                 "app.models.quote",
                 "app.models.project",
+                "app.models.user",
+                "app.models.enquiry",
             ],
             "default_connection": "default",
         },
