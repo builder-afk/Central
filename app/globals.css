@@ -978,3 +978,209 @@ body {
   border-radius: 999px;
   transition: width 0.5s var(--ease-out-expo);
 }
+
+/* ============================================
+   COST ESTIMATOR — Premium Widget Styles
+   ============================================ */
+
+/* Estimator pill selector */
+.estimator-pill {
+  padding: 0.5rem 1.125rem;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  white-space: nowrap;
+}
+
+.estimator-pill:hover {
+  border-color: rgba(0, 0, 0, 0.15);
+  color: #334155;
+}
+
+.estimator-pill.active {
+  background: #0f172a;
+  color: #ffffff;
+  border-color: #0f172a;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+}
+
+/* Toggle switch */
+.estimator-toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.3s var(--ease-out-expo);
+  border: none;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.estimator-toggle::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.estimator-toggle.active {
+  background: #0f172a;
+}
+
+.estimator-toggle.active::after {
+  transform: translateX(20px);
+}
+
+/* Breakdown bar row */
+.breakdown-bar {
+  height: 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  overflow: hidden;
+  position: relative;
+}
+
+.breakdown-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0f172a, #334155);
+  transition: width 0.6s var(--ease-out-expo);
+}
+
+/* Budget tier card */
+.budget-tier-card {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  transition: all 0.3s var(--ease-out-expo);
+  text-align: center;
+}
+
+.budget-tier-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.budget-tier-card.recommended {
+  border-color: #0f172a;
+  background: #fafafa;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Segmented control */
+.segmented-control {
+  display: inline-flex;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.segmented-control button {
+  padding: 0.4rem 0.875rem;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #64748b;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s var(--ease-out-expo);
+}
+
+.segmented-control button:hover {
+  color: #334155;
+}
+
+.segmented-control button.active {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Quality tier cards */
+.quality-card {
+  border: 2px solid rgba(0, 0, 0, 0.06);
+  border-radius: 1rem;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-out-expo);
+  background: #ffffff;
+}
+
+.quality-card:hover {
+  border-color: rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.quality-card.active {
+  border-color: #0f172a;
+  background: #fafafa;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Formula visualization */
+.formula-step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-family: var(--font-mono);
+}
+
+.formula-operator {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+/* Coming soon banner */
+.coming-soon-banner {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  padding: 1rem 1.5rem;
+}
+
+/* Expand/collapse animation */
+@keyframes expand-in {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    max-height: 2000px;
+    transform: translateY(0);
+  }
+}
+
+.animate-expand {
+  animation: expand-in 0.4s var(--ease-out-expo) both;
+  overflow: hidden;
+}
