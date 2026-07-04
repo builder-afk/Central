@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model builder_quotes {
+  id                     Int      @id @default(autoincrement())
+  builder_id             String   @db.VarChar(50)
+  project_type           String   @db.VarChar(50)
+  builtup_area           Float
+  floors                 Int
+  quality_tier           String   @db.VarChar(20)
+  quoted_cost            Float
+  accepted               Boolean
+  actual_completion_cost Float?
+  created_at             DateTime @db.Timestamptz(6)
+  city_id                Int
+  cities                 cities   @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([builder_id], map: "idx_builder_quo_builder_9e49be")
+  @@index([city_id], map: "idx_builder_quo_city_id_b61f80")
+}
+
+model builder_rates {
+  id                Int      @id @default(autoincrement())
+  builder_id        String   @db.VarChar(50)
+  construction_type String   @db.VarChar(50)
+  quality_tier      String   @db.VarChar(20)
+  rate_per_sqft     Float
+  last_updated      DateTime @db.Timestamptz(6)
+  city_id           Int
+  cities            cities   @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([builder_id], map: "idx_builder_rat_builder_542547")
+  @@index([city_id], map: "idx_builder_rat_city_id_f0b0dc")
+}
+
+model cities {
+  id                     Int               @id @default(autoincrement())
+  name                   String            @unique @db.VarChar(100)
+  state                  String            @db.VarChar(100)
+  pin_code_prefix        String?           @db.VarChar(6)
+  construction_index     Float
+  labour_index           Float
+  material_index         Float
+  approval_index         Float
+  inflation_index        Float
+  transportation_index   Float
+  availability_index     Float
+  base_rate_economy      Float
+  base_rate_standard     Float
+  base_rate_premium      Float
+  base_rate_luxury       Float
+  base_rate_ultra_luxury Float
+  last_updated           DateTime          @db.Timestamptz(6)
+  builder_quotes         builder_quotes[]
+  builder_rates          builder_rates[]
+  labour_rates           labour_rates[]
+  material_rates         material_rates[]
+  project_history        project_history[]
+
+  @@index([name], map: "idx_cities_name_5891f2")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model contact_inquiries {
+  id               Int      @id @default(autoincrement())
+  reference_number String   @unique @db.VarChar(50)
+  name             String   @db.VarChar(255)
+  email            String   @db.VarChar(255)
+  phone            String?  @db.VarChar(50)
+  company          String?  @db.VarChar(255)
+  service          String?  @db.VarChar(100)
+  source           String?  @db.VarChar(100)
+  message          String
+  status           String   @db.VarChar(11)
+  created_at       DateTime @db.Timestamptz(6)
+  updated_at       DateTime @db.Timestamptz(6)
+
+  @@index([reference_number], map: "idx_contact_inq_referen_693b9e")
+  @@index([status], map: "idx_contact_inq_status_7b6047")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model enquiries {
+  id         Int      @id @default(autoincrement())
+  subject    String   @db.VarChar(255)
+  message    String
+  status     String   @db.VarChar(11)
+  created_at DateTime @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  user_id    Int
+  users      users    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([status], map: "idx_enquiries_status_078919")
+  @@index([user_id], map: "idx_enquiries_user_id_92ac86")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model labour_rates {
+  id             Int      @id @default(autoincrement())
+  trade          String   @db.VarChar(19)
+  quality_tier   String   @db.VarChar(20)
+  daily_rate     Float
+  effective_date DateTime @db.Timestamptz(6)
+  last_updated   DateTime @db.Timestamptz(6)
+  city_id        Int
+  cities         cities   @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([city_id], map: "idx_labour_rate_city_id_9c06c7")
+  @@index([trade], map: "idx_labour_rate_trade_231871")
+}
+
+model material_history {
+  id               Int            @id @default(autoincrement())
+  rate             Float
+  recorded_at      DateTime       @db.Timestamptz(6)
+  material_rate_id Int
+  material_rates   material_rates @relation(fields: [material_rate_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([material_rate_id], map: "idx_material_hi_materia_34913c")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model material_rates {
+  id               Int                @id @default(autoincrement())
+  material_type    String             @db.VarChar(10)
+  quality_tier     String             @db.VarChar(12)
+  current_rate     Float
+  unit             String             @db.VarChar(20)
+  brand            String?            @db.VarChar(100)
+  effective_date   DateTime           @db.Timestamptz(6)
+  last_updated     DateTime           @db.Timestamptz(6)
+  city_id          Int
+  material_history material_history[]
+  cities           cities             @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([city_id], map: "idx_material_ra_city_id_cc6090")
+  @@index([material_type], map: "idx_material_ra_materia_502611")
+}
+
+model project_history {
+  id                Int       @id @default(autoincrement())
+  builder_id        String?   @db.VarChar(50)
+  project_type      String    @db.VarChar(50)
+  builtup_area      Float
+  floors            Int
+  quality_tier      String    @db.VarChar(20)
+  soil_type         String?   @db.VarChar(50)
+  foundation_type   String?   @db.VarChar(50)
+  structural_system String?   @db.VarChar(50)
+  bedrooms          Int?
+  bathrooms         Int?
+  estimated_cost    Float
+  final_cost        Float?
+  variance_percent  Float?
+  started_at        DateTime? @db.Timestamptz(6)
+  completed_at      DateTime? @db.Timestamptz(6)
+  duration_months   Int?
+  created_at        DateTime  @db.Timestamptz(6)
+  city_id           Int
+  cities            cities    @relation(fields: [city_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([builder_id], map: "idx_project_his_builder_2e911d")
+  @@index([city_id], map: "idx_project_his_city_id_f5430c")
+}
+
+model users {
+  id              Int         @id @default(autoincrement())
+  email           String      @unique @db.VarChar(255)
+  hashed_password String      @db.VarChar(255)
+  is_active       Boolean
+  created_at      DateTime    @db.Timestamptz(6)
+  updated_at      DateTime    @db.Timestamptz(6)
+  full_name       String?     @db.VarChar(255)
+  company         String?     @db.VarChar(255)
+  role            String?     @db.VarChar(100)
+  enquiries       enquiries[]
+
+  @@index([email], map: "idx_users_email_133a6f")
+}

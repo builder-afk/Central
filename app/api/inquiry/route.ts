@@ -1,4 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import crypto from "crypto";
+
+function generateRefNumber() {
+  const timestamp = Date.now().toString();
+  const shortUuid = crypto.randomUUID().replace(/-/g, "").substring(0, 4).toUpperCase();
+  return `INQ-${timestamp.slice(-4)}${shortUuid}`;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,28 +21,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Forward the inquiry to the FastAPI backend which will save it to NeonDB
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
-      const response = await fetch(`${backendUrl}/api/v1/contact/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+      const refNumber = generateRefNumber();
+      
+      const inquiry = await prisma.contact_inquiries.create({
+        data: {
+          reference_number: refNumber,
+          name,
+          email,
+          phone,
+          company,
+          service,
+          source,
+          message,
+          status: "NEW",
+          created_at: new Date(),
+          updated_at: new Date(),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`Backend error: ${response.statusText}`);
-      }
-      
-      const result = await response.json();
-      
       return NextResponse.json({
         success: true,
-        refNumber: result.reference_number,
+        refNumber: inquiry.reference_number,
         message: "Inquiry received successfully. We'll get back to you within 24 hours.",
       });
     } catch (err) {
-      console.error("Error saving inquiry to backend:", err);
+      console.error("Error saving inquiry:", err);
       return NextResponse.json(
         { error: "Failed to save inquiry. Please try again." },
         { status: 500 }
