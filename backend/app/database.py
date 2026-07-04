@@ -23,6 +23,7 @@ TORTOISE_ORM = {
                 "app.models.project",
                 "app.models.user",
                 "app.models.enquiry",
+                "app.models.contact_inquiry",
             ],
             "default_connection": "default",
         },

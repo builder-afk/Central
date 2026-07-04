@@ -13,34 +13,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate a reference number
-    const refNumber = `INQ-${Date.now().toString(36).toUpperCase()}`;
+    // Forward the inquiry to the FastAPI backend which will save it to NeonDB
+    try {
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const response = await fetch(`${backendUrl}/api/v1/contact/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
 
-    // Log the inquiry (in production, this would go to a database/CRM)
-    console.log("━━━ NEW INQUIRY ━━━");
-    console.log(`Ref: ${refNumber}`);
-    console.log(`Name: ${name}`);
-    console.log(`Email: ${email}`);
-    console.log(`Phone: ${phone || "N/A"}`);
-    console.log(`Company: ${company || "N/A"}`);
-    console.log(`Service: ${service || "General"}`);
-    console.log(`Source: ${source || "Contact Page"}`);
-    console.log(`Message: ${message}`);
-    console.log(`Time: ${new Date().toISOString()}`);
-    console.log("━━━━━━━━━━━━━━━━━━━");
-
-    // TODO: In production, integrate with:
-    // - Resend/SendGrid for email notifications
-    // - Supabase/Firebase for persistence
-    // - Slack webhook for team notifications
-    // - CRM (HubSpot, etc.)
-
-    return NextResponse.json({
-      success: true,
-      refNumber,
-      message: "Inquiry received successfully. We'll get back to you within 24 hours.",
-    });
-  } catch {
+      if (!response.ok) {
+        throw new Error(`Backend error: ${response.statusText}`);
+      }
+      
+      const result = await response.json();
+      
+      return NextResponse.json({
+        success: true,
+        refNumber: result.reference_number,
+        message: "Inquiry received successfully. We'll get back to you within 24 hours.",
+      });
+    } catch (err) {
+      console.error("Error saving inquiry to backend:", err);
+      return NextResponse.json(
+        { error: "Failed to save inquiry. Please try again." },
+        { status: 500 }
+      );
+    }
+  } catch (error) {
     return NextResponse.json(
       { error: "Something went wrong. Please try again." },
       { status: 500 }

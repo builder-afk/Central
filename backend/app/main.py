@@ -17,37 +17,43 @@ from app.seeds.seed_builders import seed_builders
 
 settings = get_settings()
 
+from tortoise.contrib.fastapi import RegisterTortoise
+from app.database import TORTOISE_ORM
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
     # ─── Startup ───
     print("🏗️  Initializing Construction Cost Intelligence Engine...")
-    await init_db()
+    
+    async with RegisterTortoise(
+        app,
+        config=TORTOISE_ORM,
+        generate_schemas=True,
+        add_exception_handlers=True,
+    ):
+        # Seed data on first run
+        cities_count = await seed_cities()
+        if cities_count > 0:
+            print(f"   ✅ Seeded {cities_count} cities")
+            # Seed materials and labour for the first city
+            mat_count = await seed_materials(city_id=1)
+            print(f"   ✅ Seeded {mat_count} material rates")
+            labour_count = await seed_labour(city_id=1)
+            print(f"   ✅ Seeded {labour_count} labour rates")
+            builder_count = await seed_builders()
+            print(f"   ✅ Seeded {builder_count} builder rates")
+        else:
+            print("   ℹ️  Database already seeded")
 
-    # Seed data on first run
-    cities_count = await seed_cities()
-    if cities_count > 0:
-        print(f"   ✅ Seeded {cities_count} cities")
-        # Seed materials and labour for the first city
-        mat_count = await seed_materials(city_id=1)
-        print(f"   ✅ Seeded {mat_count} material rates")
-        labour_count = await seed_labour(city_id=1)
-        print(f"   ✅ Seeded {labour_count} labour rates")
-        builder_count = await seed_builders()
-        print(f"   ✅ Seeded {builder_count} builder rates")
-    else:
-        print("   ℹ️  Database already seeded")
+        print(f"🚀 Engine ready — v{settings.APP_VERSION}")
+        print(f"   📍 API: http://localhost:8000{settings.API_V1_PREFIX}")
+        print(f"   📖 Docs: http://localhost:8000/docs")
 
-    print(f"🚀 Engine ready — v{settings.APP_VERSION}")
-    print(f"   📍 API: http://localhost:8000{settings.API_V1_PREFIX}")
-    print(f"   📖 Docs: http://localhost:8000/docs")
-
-    yield
+        yield
 
     # ─── Shutdown ───
     print("🛑 Shutting down engine...")
-    await close_db()
 
 
 # ─── Create FastAPI app ───
