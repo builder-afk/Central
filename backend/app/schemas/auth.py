@@ -9,6 +9,9 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    full_name: Optional[str] = None
+    company: Optional[str] = None
+    role: Optional[str] = None
 
 
 class UserLogin(UserBase):
@@ -17,6 +20,9 @@ class UserLogin(UserBase):
 
 class UserResponse(UserBase):
     id: int
+    full_name: Optional[str] = None
+    company: Optional[str] = None
+    role: Optional[str] = None
     is_active: bool
     created_at: datetime
     updated_at: datetime

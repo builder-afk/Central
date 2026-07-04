@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
 
     // Forward the inquiry to the FastAPI backend which will save it to NeonDB
     try {
-      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+      const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
       const response = await fetch(`${backendUrl}/api/v1/contact/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

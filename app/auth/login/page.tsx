@@ -11,17 +11,39 @@ import {
   EyeOff,
   ArrowRight,
   Sparkles,
+  Loader2,
 } from "lucide-react";
+import { login } from "@/lib/api/auth";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const { access_token } = await login({ email, password });
+      localStorage.setItem("houseverse_token", access_token);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message || "Invalid credentials");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
       {/* Left Panel — Branding */}
-      <div className="hidden lg:flex flex-1 relative bg-space-900 items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex flex-1 relative bg-[#fdf8f5] items-center justify-center overflow-hidden">
         {/* Background effects */}
         <div className="absolute inset-0 bg-mesh" />
         <div className="absolute inset-0 bg-dot-grid opacity-30" />
@@ -37,11 +59,11 @@ export default function LoginPage() {
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-electric to-purple flex items-center justify-center mb-8 shadow-glow">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h2 className="font-display text-4xl font-bold text-white mb-4">
+            <h2 className="font-display text-4xl font-bold text-slate-900 mb-4">
               Walk through your
               <span className="gradient-text-hero"> dream home</span>
             </h2>
-            <p className="text-slate-400 text-lg leading-relaxed mb-8">
+            <p className="text-slate-600 text-lg leading-relaxed mb-8">
               Upload plans, generate immersive 3D walkthroughs, and share with
               anyone — all in your browser.
             </p>
@@ -54,7 +76,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel — Login Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-space-black">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -66,15 +88,15 @@ export default function LoginPage() {
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-electric to-purple flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display text-xl font-bold text-white">
+            <span className="font-display text-xl font-bold text-slate-900">
               HouseVerse<span className="text-electric"> AI</span>
             </span>
           </div>
 
-          <h1 className="font-display text-3xl font-bold text-white mb-2">
+          <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">
             Welcome back
           </h1>
-          <p className="text-slate-400 mb-8">
+          <p className="text-slate-600 mb-8">
             Log in to your account to continue building.
           </p>
 
@@ -126,7 +148,7 @@ export default function LoginPage() {
             ].map((provider) => (
               <button
                 key={provider.name}
-                className="flex items-center justify-center gap-2 py-3 rounded-xl glass hover:bg-white/10 transition-all text-sm text-slate-300"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-all text-sm text-slate-700 font-medium"
               >
                 {provider.icon}
               </button>
@@ -135,23 +157,25 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-4 mb-6">
-            <div className="flex-1 h-px bg-white/5" />
+            <div className="flex-1 h-px bg-slate-200" />
             <span className="text-xs text-slate-500 uppercase tracking-wider">
               or continue with email
             </span>
-            <div className="flex-1 h-px bg-white/5" />
+            <div className="flex-1 h-px bg-slate-200" />
           </div>
 
           {/* Form */}
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              window.location.href = "/dashboard";
-            }}
+            onSubmit={handleLogin}
             className="space-y-4"
           >
+            {error && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                {error}
+              </div>
+            )}
             <div>
-              <label htmlFor="email" className="text-sm text-slate-400 mb-1.5 block">
+              <label htmlFor="email" className="text-sm text-slate-600 mb-1.5 block">
                 Email
               </label>
               <div className="relative">
@@ -170,7 +194,7 @@ export default function LoginPage() {
 
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label htmlFor="password" className="text-sm text-slate-400">
+                <label htmlFor="password" className="text-sm text-slate-600">
                   Password
                 </label>
                 <a
@@ -194,7 +218,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors"
                 >
                   {showPassword ? (
                     <EyeOff className="w-4 h-4" />
@@ -207,17 +231,27 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="btn-primary w-full !py-3 text-base group"
+              disabled={loading}
+              className="btn-primary w-full !py-3 text-base group disabled:opacity-50"
             >
               <span className="flex items-center justify-center gap-2">
-                Log in
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    Log in
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
               </span>
             </button>
           </form>
 
           {/* Magic Link */}
-          <button className="w-full mt-3 py-3 rounded-xl text-sm text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-2">
+          <button className="w-full mt-3 py-3 rounded-xl text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-900/5 transition-all flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4" />
             Send magic link instead
           </button>

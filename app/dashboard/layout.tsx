@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "@/components/dashboard/Sidebar";
 import TopBar from "@/components/dashboard/TopBar";
 import { Menu, X } from "lucide-react";
+import AuthGuard from "@/components/auth/AuthGuard";
 
 export default function DashboardLayout({
   children,
@@ -14,7 +15,8 @@ export default function DashboardLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-space-black">
+    <AuthGuard>
+      <div className="min-h-screen bg-space-black">
       {/* Desktop Sidebar */}
       <div className="hidden lg:block">
         <Sidebar />
@@ -69,5 +71,6 @@ export default function DashboardLayout({
         <main className="flex-1 p-4 sm:p-6">{children}</main>
       </div>
     </div>
+    </AuthGuard>
   );
 }

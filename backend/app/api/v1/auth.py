@@ -3,11 +3,16 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from app.models.user import User
 from app.schemas.auth import UserCreate, UserResponse, Token
-from app.security import get_password_hash, verify_password, create_access_token
+from app.security import get_password_hash, verify_password, create_access_token, get_current_user
 from app.config import get_settings
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 settings = get_settings()
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_profile(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
@@ -22,7 +27,10 @@ async def signup(user_data: UserCreate):
     hashed_password = get_password_hash(user_data.password)
     user = await User.create(
         email=user_data.email,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        full_name=user_data.full_name,
+        company=user_data.company,
+        role=user_data.role
     )
     return user
 

@@ -12,7 +12,9 @@ import {
   EyeOff,
   ArrowRight,
   Check,
+  Loader2,
 } from "lucide-react";
+import { signup } from "@/lib/api/auth";
 
 const steps = [
   { label: "Account", description: "Email & password" },
@@ -23,6 +25,8 @@ const steps = [
 export default function SignupPage() {
   const [step, setStep] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -31,13 +35,37 @@ export default function SignupPage() {
     role: "",
   });
 
-  const updateForm = (field: string, value: string) =>
+  const updateForm = (field: string, value: string) => {
     setForm((f) => ({ ...f, [field]: value }));
+    setError(null);
+  };
+
+  const handleSignup = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const signupData = {
+        email: form.email,
+        password: form.password,
+        full_name: form.name,
+        company: form.company || undefined,
+        role: form.role || undefined,
+      };
+
+      await signup(signupData);
+      setStep(2);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong during signup");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
       {/* Left Panel */}
-      <div className="hidden lg:flex flex-1 relative bg-space-900 items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex flex-1 relative bg-[#fdf8f5] items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-mesh" />
         <div className="absolute inset-0 bg-dot-grid opacity-30" />
         <div className="absolute top-1/3 right-1/4 w-96 h-96 rounded-full bg-purple/10 blur-[120px]" />
@@ -52,11 +80,11 @@ export default function SignupPage() {
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-purple to-electric flex items-center justify-center mb-8 shadow-glow-purple">
               <Building2 className="w-8 h-8 text-white" />
             </div>
-            <h2 className="font-display text-4xl font-bold text-white mb-4">
+            <h2 className="font-display text-4xl font-bold text-slate-900 mb-4">
               Start building
               <span className="gradient-text"> stunning 3D tours</span>
             </h2>
-            <p className="text-slate-400 text-lg leading-relaxed mb-8">
+            <p className="text-slate-600 text-lg leading-relaxed mb-8">
               Join thousands of architects, developers, and designers creating
               immersive property experiences.
             </p>
@@ -71,7 +99,7 @@ export default function SignupPage() {
               ].map((feature) => (
                 <li
                   key={feature}
-                  className="flex items-center gap-3 text-sm text-slate-400"
+                  className="flex items-center gap-3 text-sm text-slate-600"
                 >
                   <div className="w-5 h-5 rounded-full bg-electric/10 flex items-center justify-center">
                     <Check className="w-3 h-3 text-electric" />
@@ -85,7 +113,7 @@ export default function SignupPage() {
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-space-black">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-white">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -97,15 +125,15 @@ export default function SignupPage() {
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-electric to-purple flex items-center justify-center">
               <Building2 className="w-5 h-5 text-white" />
             </div>
-            <span className="font-display text-xl font-bold text-white">
+            <span className="font-display text-xl font-bold text-slate-900">
               HouseVerse<span className="text-electric"> AI</span>
             </span>
           </div>
 
-          <h1 className="font-display text-3xl font-bold text-white mb-2">
+          <h1 className="font-display text-3xl font-bold text-slate-900 mb-2">
             Create your account
           </h1>
-          <p className="text-slate-400 mb-8">
+          <p className="text-slate-600 mb-8">
             Get started free — upgrade anytime.
           </p>
 
@@ -119,14 +147,14 @@ export default function SignupPage() {
                         ? "bg-electric text-white"
                         : i === step
                           ? "bg-electric/10 text-electric border border-electric/30"
-                          : "bg-white/5 text-slate-500"
+                          : "bg-slate-900/5 text-slate-500"
                       }`}
                   >
                     {i < step ? <Check className="w-4 h-4" /> : i + 1}
                   </div>
                   <div className="hidden sm:block">
                     <p
-                      className={`text-xs font-medium ${i <= step ? "text-white" : "text-slate-500"
+                      className={`text-xs font-medium ${i <= step ? "text-slate-900" : "text-slate-500"
                         }`}
                     >
                       {s.label}
@@ -135,7 +163,7 @@ export default function SignupPage() {
                 </div>
                 {i < steps.length - 1 && (
                   <div
-                    className={`flex-1 h-px ${i < step ? "bg-electric" : "bg-white/5"
+                    className={`flex-1 h-px ${i < step ? "bg-electric" : "bg-slate-900/10"
                       }`}
                   />
                 )}
@@ -154,7 +182,7 @@ export default function SignupPage() {
                 {["Google", "Microsoft", "GitHub"].map((provider) => (
                   <button
                     key={provider}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl glass hover:bg-white/10 transition-all text-sm text-slate-300"
+                    className="flex items-center justify-center gap-2 py-3 rounded-xl bg-white border border-slate-200 shadow-sm hover:bg-slate-50 transition-all text-sm text-slate-700 font-medium"
                   >
                     {provider}
                   </button>
@@ -162,16 +190,16 @@ export default function SignupPage() {
               </div>
 
               <div className="flex items-center gap-4 mb-6">
-                <div className="flex-1 h-px bg-white/5" />
+                <div className="flex-1 h-px bg-slate-200" />
                 <span className="text-xs text-slate-500 uppercase tracking-wider">
                   or with email
                 </span>
-                <div className="flex-1 h-px bg-white/5" />
+                <div className="flex-1 h-px bg-slate-200" />
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="signup-email" className="text-sm text-slate-400 mb-1.5 block">
+                  <label htmlFor="signup-email" className="text-sm text-slate-600 mb-1.5 block">
                     Email
                   </label>
                   <div className="relative">
@@ -188,7 +216,7 @@ export default function SignupPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="signup-password" className="text-sm text-slate-400 mb-1.5 block">
+                  <label htmlFor="signup-password" className="text-sm text-slate-600 mb-1.5 block">
                     Password
                   </label>
                   <div className="relative">
@@ -222,7 +250,7 @@ export default function SignupPage() {
                             ? i <= 2
                               ? "bg-amber-500"
                               : "bg-emerald"
-                            : "bg-white/5"
+                            : "bg-slate-200"
                           }`}
                       />
                     ))}
@@ -251,7 +279,7 @@ export default function SignupPage() {
               className="space-y-4"
             >
               <div>
-                <label htmlFor="signup-name" className="text-sm text-slate-400 mb-1.5 block">
+                <label htmlFor="signup-name" className="text-sm text-slate-600 mb-1.5 block">
                   Full Name
                 </label>
                 <div className="relative">
@@ -268,7 +296,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="signup-company" className="text-sm text-slate-400 mb-1.5 block">
+                <label htmlFor="signup-company" className="text-sm text-slate-600 mb-1.5 block">
                   Company (Optional)
                 </label>
                 <input
@@ -282,7 +310,7 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <label htmlFor="signup-role" className="text-sm text-slate-400 mb-1.5 block">
+                <label htmlFor="signup-role" className="text-sm text-slate-600 mb-1.5 block">
                   I am a...
                 </label>
                 <div className="grid grid-cols-2 gap-2">
@@ -299,7 +327,7 @@ export default function SignupPage() {
                       onClick={() => updateForm("role", role)}
                       className={`py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${form.role === role
                           ? "bg-electric/10 text-electric border border-electric/30"
-                          : "glass text-slate-400 hover:text-white hover:bg-white/10"
+                          : "bg-white border border-slate-200 shadow-sm text-slate-700 hover:bg-slate-50"
                         }`}
                     >
                       {role}
@@ -308,22 +336,40 @@ export default function SignupPage() {
                 </div>
               </div>
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => setStep(0)}
-                  className="btn-secondary flex-1 !py-3"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={() => setStep(2)}
-                  className="btn-primary flex-1 !py-3 group"
-                >
-                  <span className="flex items-center justify-center gap-2">
-                    Continue
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </button>
+              <div className="flex flex-col gap-3 pt-2">
+                {error && (
+                  <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+                    {error}
+                  </div>
+                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setStep(0)}
+                    disabled={loading}
+                    className="btn-secondary flex-1 !py-3 disabled:opacity-50"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleSignup}
+                    disabled={loading}
+                    className="btn-primary flex-1 !py-3 group disabled:opacity-50"
+                  >
+                    <span className="flex items-center justify-center gap-2">
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          Continue
+                          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </>
+                      )}
+                    </span>
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
@@ -339,10 +385,10 @@ export default function SignupPage() {
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-electric to-purple flex items-center justify-center mx-auto mb-6 shadow-glow animate-pulse-glow">
                 <Check className="w-10 h-10 text-white" />
               </div>
-              <h3 className="font-display text-2xl font-bold text-white mb-2">
+              <h3 className="font-display text-2xl font-bold text-slate-900 mb-2">
                 You&apos;re all set!
               </h3>
-              <p className="text-slate-400 mb-8">
+              <p className="text-slate-600 mb-8">
                 Your workspace is ready. Start creating your first 3D
                 walkthrough.
               </p>
@@ -371,11 +417,11 @@ export default function SignupPage() {
           {step < 2 && (
             <p className="text-center text-xs text-slate-600 mt-6">
               By continuing, you agree to our{" "}
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
+              <a href="#" className="text-slate-900 hover:text-electric transition-colors underline decoration-slate-300 underline-offset-2">
                 Terms
               </a>{" "}
               and{" "}
-              <a href="#" className="text-slate-400 hover:text-white transition-colors">
+              <a href="#" className="text-slate-900 hover:text-electric transition-colors underline decoration-slate-300 underline-offset-2">
                 Privacy Policy
               </a>
               .

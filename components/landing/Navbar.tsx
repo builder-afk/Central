@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Clock, Menu, X, ArrowRight, User, LayoutDashboard, CalendarCheck, LogOut, MessageCircle } from "lucide-react";
 import { WHATSAPP } from "@/lib/constants";
+import { getCurrentUser } from "@/lib/api/auth";
 
 const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg = "bg-white", iconIcon = ArrowRight }: any) => {
   const Icon = iconIcon;
@@ -23,9 +24,21 @@ const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
-  const [userRole, setUserRole] = useState<'builder' | 'user'>('builder');
+  const [user, setUser] = useState<any>(null);
   const [time, setTime] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("houseverse_token");
+    if (token) {
+      getCurrentUser(token)
+        .then((data) => setUser(data))
+        .catch(() => {
+          localStorage.removeItem("houseverse_token");
+          setUser(null);
+        });
+    }
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -48,6 +61,12 @@ export default function Navbar() {
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("houseverse_token");
+    setUser(null);
+    setIsAccountDropdownOpen(false);
+  };
 
   const navLinks = [
     { label: "Professionals", href: "/" },
@@ -84,67 +103,55 @@ export default function Navbar() {
               <span className="text-[13px] text-[#171717]/70 font-medium hidden lg:inline">{time} in London</span>
               <span className="text-[13px] text-[#171717]/70 font-medium lg:hidden">{time}</span>
             </div>
-            <Link href="/contact">
-              <AnimatedButton text="Get Started" className="bg-[#171717] text-white hidden lg:flex hover:bg-[#624334]" iconColor="text-[#171717]" />
-            </Link>
+            {!user && (
+              <Link href="/auth/signup">
+                <AnimatedButton text="Get Started" className="bg-[#171717] text-white hidden lg:flex hover:bg-[#624334]" iconColor="text-[#171717]" />
+              </Link>
+            )}
           </div>
         </div>
 
         {/* RIGHT - Account & Mobile Toggle */}
-        <div className="pointer-events-auto flex items-center gap-3">
+        <div className="pointer-events-auto flex items-center gap-4">
           
-          {/* Account Dropdown */}
-          <div className="relative" ref={dropdownRef}>
-            <button 
-              onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
-              className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#171717] hover:bg-[#fdf8f5] transition-colors border border-[#171717]/10 shadow-sm"
-            >
-              <User className="w-4.5 h-4.5" />
-            </button>
-            
-            {isAccountDropdownOpen && (
-              <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 overflow-hidden font-body">
-                <div className="px-5 py-4 border-b border-slate-100 mb-2 bg-slate-50/50">
-                  <p className="text-sm font-semibold text-slate-900 mb-0.5">Arjun Kapoor</p>
-                  <p className="text-xs text-slate-500 capitalize">{userRole} Account</p>
+          {user ? (
+            <div className="relative" ref={dropdownRef}>
+              <button 
+                onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
+                className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[#171717] hover:bg-[#fdf8f5] transition-colors border border-[#171717]/10 shadow-sm"
+              >
+                <User className="w-4.5 h-4.5" />
+              </button>
+              
+              {isAccountDropdownOpen && (
+                <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50 overflow-hidden font-body">
+                  <div className="px-5 py-4 border-b border-slate-100 mb-2 bg-slate-50/50">
+                    <p className="text-sm font-semibold text-slate-900 mb-0.5">{user.full_name || user.email}</p>
+                    <p className="text-xs text-slate-500 capitalize">{user.role || 'user'} Account</p>
+                  </div>
+                  
+                  <Link href="/dashboard" onClick={() => setIsAccountDropdownOpen(false)} className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                    <LayoutDashboard className="w-4 h-4 text-slate-400" />
+                    My Dashboard
+                  </Link>
+                  
+                  <div className="h-px bg-slate-100 my-2 mx-4" />
+                  
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left"
+                  >
+                    <LogOut className="w-4 h-4 text-red-400" />
+                    Log Out
+                  </button>
                 </div>
-                
-                {userRole === 'builder' ? (
-                  <>
-                    <Link href="/builders/dashboard" onClick={() => setIsAccountDropdownOpen(false)} className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                      <LayoutDashboard className="w-4 h-4 text-slate-400" />
-                      My Dashboard
-                    </Link>
-                    <Link href="/builders/builder-1" onClick={() => setIsAccountDropdownOpen(false)} className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                      <User className="w-4 h-4 text-slate-400" />
-                      Public Profile
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link href="/user/dashboard" onClick={() => setIsAccountDropdownOpen(false)} className="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors">
-                      <CalendarCheck className="w-4 h-4 text-slate-400" />
-                      My Dashboard
-                    </Link>
-                  </>
-                )}
-                
-                <div className="h-px bg-slate-100 my-2 mx-4" />
-                
-                <button 
-                  onClick={() => setUserRole(r => r === 'builder' ? 'user' : 'builder')}
-                  className="w-full flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors text-left"
-                >
-                  Switch to {userRole === 'builder' ? 'User View' : 'Builder View'}
-                </button>
-                
-                <button className="w-full flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left mt-1">
-                  <LogOut className="w-4 h-4 text-red-400" />
-                  Log Out
-                </button>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <Link href="/auth/login" className="hidden md:flex text-[14px] font-medium text-[#171717] hover:text-[#936850] transition-colors bg-white px-5 py-2 rounded-full shadow-sm border border-slate-200">
+              Log In
+            </Link>
+          )}
 
           <button 
             className="md:hidden w-10 h-10 bg-[#171717] rounded-full flex items-center justify-center text-white shadow-sm"
@@ -174,9 +181,15 @@ export default function Navbar() {
             ))}
           </nav>
           <div className="mt-4 flex flex-col gap-3">
-            <Link href="/auth/login" className="text-center font-medium text-gray-600 hover:text-gray-900 py-2">
-              Log In
-            </Link>
+            {user ? (
+              <Link href="/dashboard" className="text-center font-medium text-gray-600 hover:text-gray-900 py-2">
+                My Dashboard
+              </Link>
+            ) : (
+              <Link href="/auth/login" className="text-center font-medium text-gray-600 hover:text-gray-900 py-2">
+                Log In
+              </Link>
+            )}
             <a
               href={WHATSAPP.getUrl(WHATSAPP.defaultMessage)}
               target="_blank"
