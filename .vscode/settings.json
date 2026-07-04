@@ -3,5 +3,6 @@
   "python.analysis.extraPaths": [
     "${workspaceFolder}/backend",
     "${workspaceFolder}/backend/venv/lib/python3.13/site-packages"
-  ]
+  ],
+  "css.lint.unknownAtRules": "ignore"
 }

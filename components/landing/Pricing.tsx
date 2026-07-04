@@ -2,95 +2,96 @@
 
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState } from "react";
-import { Check, Zap, Building2, Crown, ArrowRight } from "lucide-react";
+import { Check, Minus, Home, Building, Crown, ArrowUpRight } from "lucide-react";
 
 const plans = [
   {
-    name: "Single Property",
-    price: "₹15,000",
-    usdPrice: "$199",
-    period: "/property",
-    description: "Perfect for a single flat or apartment listing.",
-    icon: Zap,
-    featured: false,
+    name: "Starter",
+    subtitle: "Get on the map",
+    priceMonthly: "1,999",
+    priceAnnual: "1,499",
+    billedAnnual: "17,991",
+    icon: Home,
+    bestFor: ["Individual builders", "New agents"],
     features: [
-      "Full 360° virtual tour capture",
-      "High-res HDR photography",
-      "Floor plan generation",
-      "Listed on HouseVerse marketplace",
-      "Basic lead generation",
-      "Delivered in 48 hours",
-      "6 months hosting included",
+      { name: "Builder profile listing", included: true },
+      { name: "Up to 5 project uploads", included: true },
+      { name: "Basic analytics dashboard", included: true },
+      { name: "Verified trust badge", included: true },
+      { name: "Directory listing & search", included: true },
+      { name: "3D property viewer", included: false },
+      { name: "Property microsite", included: false },
+      { name: "Lead management tools", included: false },
     ],
+    buttonText: "Get started",
+    buttonType: "outline",
+    popular: false,
   },
   {
-    name: "Villa Package",
-    price: "₹35,000",
-    usdPrice: "$499",
-    period: "/property",
-    description: "Comprehensive coverage for large villas and estates.",
-    icon: Building2,
-    featured: true,
+    name: "Professional",
+    subtitle: "Built for serious growth",
+    priceMonthly: "4,999",
+    priceAnnual: "3,749",
+    billedAnnual: "44,991",
+    icon: Building,
+    bestFor: ["Active builders", "Real estate agents"],
     features: [
-      "Multi-floor 360° virtual tour",
-      "Drone aerial photography",
-      "Twilight exterior shots",
-      "Premium marketplace placement",
-      "Advanced lead analytics",
-      "Delivered in 72 hours",
-      "12 months hosting included",
-      "Dedicated property landing page",
+      { name: "Everything in Starter", included: true },
+      { name: "Up to 20 project uploads", included: true },
+      { name: "Web-based 3D property viewer", included: true },
+      { name: "1 property microsite", included: true },
+      { name: "Interactive floor plans", included: true },
+      { name: "Lead management & CRM", included: true },
+      { name: "Real-time analytics + lead source", included: true },
+      { name: "AI visualization tools", included: false },
     ],
+    buttonText: "Get started",
+    buttonType: "filled",
+    popular: true,
   },
   {
-    name: "Developer Portfolio",
-    price: "Custom",
-    usdPrice: "Custom",
-    period: "",
-    description: "Scale your entire pre-construction project.",
+    name: "Elite",
+    subtitle: "Full platform access",
+    priceMonthly: "9,999",
+    priceAnnual: "7,499",
+    billedAnnual: "89,991",
     icon: Crown,
-    featured: false,
+    bestFor: ["Developers", "Large agencies"],
     features: [
-      "Multiple property captures",
-      "Pre-construction 3D renders",
-      "White-labeled virtual tours",
-      "Custom branding integration",
-      "API access for your website",
-      "Dedicated account manager",
-      "Lifetime hosting",
-      "Priority shoot scheduling",
+      { name: "Everything in Professional", included: true },
+      { name: "Unlimited project uploads", included: true },
+      { name: "Unlimited property microsites", included: true },
+      { name: "AI visualization & virtual staging", included: true },
+      { name: "Priority listing in search", included: true },
+      { name: "Dedicated account manager", included: true },
+      { name: "API access & integrations", included: true },
+      { name: "Custom branding & white-label", included: true },
     ],
+    buttonText: "Contact sales",
+    buttonType: "outline",
+    popular: false,
   },
 ];
 
 export default function Pricing() {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, margin: "-100px" });
-  const [showUSD, setShowUSD] = useState(false);
+  const [isAnnual, setIsAnnual] = useState(false);
   const [hoveredPlan, setHoveredPlan] = useState<string | null>(null);
 
   return (
     <section
       ref={sectionRef}
       id="pricing"
-      className="relative bg-[#FAFAFA] pt-16 sm:pt-20 lg:pt-32 pb-12 sm:pb-16 lg:pb-24 overflow-hidden"
+      className="relative bg-transparent pt-16 sm:pt-20 lg:pt-32 pb-12 sm:pb-16 lg:pb-24 overflow-hidden font-sans"
     >
       <div className="max-w-[1440px] mx-auto px-5 sm:px-8 lg:px-12 relative z-10">
-        {/* Badge Row */}
-        <div className="flex items-center justify-center gap-3 mb-6 sm:mb-8">
-          <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-gray-900 text-white flex items-center justify-center text-[11px] sm:text-[12px] font-semibold shadow-sm">
-            5
-          </div>
-          <div className="text-[12px] sm:text-[13px] font-medium border border-gray-200 rounded-full px-4 py-1.5 text-gray-900 bg-white shadow-sm tracking-wide">
-            PRICING
-          </div>
-        </div>
-
+        
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          className="text-center mb-16 flex flex-col items-center"
         >
           <h2 className="text-gray-900 font-heading italic leading-[1.12] tracking-[-0.02em] text-[clamp(2rem,5vw,3.5rem)] mb-4 max-w-[900px] mx-auto">
             Simple, transparent pricing.
@@ -99,41 +100,38 @@ export default function Pricing() {
             Turn your properties into immersive digital experiences. We shoot, process, and host your listings with zero hidden fees.
           </p>
 
-          {/* Animated Currency Toggle */}
-          <div className="relative inline-flex items-center p-1.5 bg-gray-200/60 rounded-xl backdrop-blur-sm shadow-inner border border-gray-200">
-            <div className="flex relative z-10">
-              <button
-                onClick={() => setShowUSD(false)}
-                className={`relative w-24 py-2 text-[14px] font-semibold transition-colors duration-300 ${
-                  !showUSD ? "text-gray-900" : "text-gray-500 hover:text-gray-700"
-                }`}
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                ₹ INR
-              </button>
-              <button
-                onClick={() => setShowUSD(true)}
-                className={`relative w-24 py-2 text-[14px] font-semibold transition-colors duration-300 ${
-                  showUSD ? "text-gray-900" : "text-gray-500 hover:text-gray-700"
-                }`}
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                $ USD
-              </button>
+          {/* Animated Toggle */}
+          <div className="flex items-center gap-4 mb-4">
+            <span className={`text-[15px] font-medium transition-colors ${!isAnnual ? "text-gray-900" : "text-gray-400"}`}>
+              Monthly
+            </span>
+            <button
+              onClick={() => setIsAnnual(!isAnnual)}
+              className="w-14 h-7 bg-gray-900 rounded-full p-1 relative flex items-center transition-colors border border-gray-800 focus:outline-none"
+            >
+              <motion.div
+                className="w-5 h-5 bg-white rounded-full shadow-sm"
+                animate={{ x: isAnnual ? 28 : 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              />
+            </button>
+            <div className="flex items-center gap-2">
+              <span className={`text-[15px] font-medium transition-colors ${isAnnual ? "text-gray-900" : "text-gray-400"}`}>
+                Annual
+              </span>
+              <AnimatePresence>
+                {isAnnual && (
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="text-[12px] font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-full"
+                  >
+                    Save 25%
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
-            {/* Sliding Highlight Background */}
-            <motion.div
-              className="absolute top-1.5 bottom-1.5 w-24 bg-white rounded-lg shadow-[0_2px_8px_rgba(0,0,0,0.08)] z-0 border border-gray-100"
-              initial={false}
-              animate={{
-                x: showUSD ? 96 : 0,
-              }}
-              transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 30,
-              }}
-            />
           </div>
         </motion.div>
 
@@ -141,7 +139,7 @@ export default function Pricing() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto items-stretch">
           {plans.map((plan, index) => {
             const isHovered = hoveredPlan === plan.name;
-            const isFeatured = plan.featured;
+            const isFeatured = plan.popular;
             
             return (
               <motion.div
@@ -151,140 +149,131 @@ export default function Pricing() {
                 transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
                 onHoverStart={() => setHoveredPlan(plan.name)}
                 onHoverEnd={() => setHoveredPlan(null)}
-                className={`relative rounded-[2rem] p-8 sm:p-10 flex flex-col transition-all duration-500 ${
+                className={`relative rounded-3xl p-8 sm:p-10 flex flex-col transition-all duration-300 ${
                   isFeatured 
-                    ? "bg-gray-900 text-white shadow-2xl shadow-gray-900/20 md:-mt-4 md:mb-4" 
-                    : "bg-white text-gray-900 border border-gray-100 shadow-xl shadow-gray-200/40"
+                    ? "bg-[#2c1b12] border-2 border-[#F26522]/60 shadow-[0_0_40px_rgba(242,101,34,0.15)]" 
+                    : "bg-[#2c1b12] border border-neutral-800/50 shadow-lg"
                 }`}
                 style={{
-                  transform: isHovered && !isFeatured ? "translateY(-8px)" : isHovered && isFeatured ? "translateY(-12px)" : "translateY(0)",
+                  transform: isHovered ? "translateY(-4px)" : "translateY(0)",
                 }}
               >
                 {/* Popular Badge */}
                 {isFeatured && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
-                    <motion.div 
-                      className="px-5 py-1.5 rounded-full text-[12px] font-bold tracking-widest uppercase bg-[#F26522] text-white shadow-[0_4px_12px_rgba(242,101,34,0.4)]"
-                      animate={{ y: [0, -4, 0] }}
-                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      Most Popular
-                    </motion.div>
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-20">
+                    <div className="px-4 py-1 rounded-full text-[11px] font-semibold tracking-wide text-white bg-[#F26522] shadow-[0_4px_12px_rgba(242,101,34,0.4)]">
+                      Most popular
+                    </div>
                   </div>
-                )}
-
-                {/* Subtle background gradient on hover for non-featured */}
-                {!isFeatured && (
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-br from-gray-50 to-white rounded-[2rem] opacity-0 transition-opacity duration-500"
-                    animate={{ opacity: isHovered ? 1 : 0 }}
-                  />
                 )}
 
                 <div className="relative z-10 flex flex-col h-full">
-                  {/* Icon & Title Area */}
-                  <div className="flex items-center gap-4 mb-6">
-                    <motion.div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-colors duration-500 ${
-                        isFeatured
-                          ? "bg-white/10 text-white"
-                          : "bg-gray-50 text-gray-900 border border-gray-100"
-                      }`}
-                      animate={isHovered ? { scale: 1.05, rotate: 5 } : { scale: 1, rotate: 0 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                    >
-                      <plan.icon className="w-6 h-6" />
-                    </motion.div>
-                    <div>
-                      <h3 className="text-[22px] sm:text-[24px] font-semibold tracking-tight">
+                  
+                  {/* Header */}
+                  <div className="mb-6">
+                    <div className="flex items-center gap-3 mb-2">
+                      <plan.icon className="w-5 h-5 text-neutral-300" />
+                      <h3 className="text-[20px] sm:text-[22px] font-semibold text-white tracking-tight">
                         {plan.name}
                       </h3>
                     </div>
+                    <p className="text-[14px] text-neutral-400 font-medium">
+                      {plan.subtitle}
+                    </p>
                   </div>
-
-                  <p
-                    className={`text-[15px] mb-8 leading-relaxed font-medium ${
-                      isFeatured ? "text-white/70" : "text-gray-500"
-                    }`}
-                  >
-                    {plan.description}
-                  </p>
 
                   {/* Price Area */}
-                  <div className="mb-10 flex items-baseline gap-2">
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={showUSD ? 'usd' : 'inr'}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="text-[40px] sm:text-[48px] font-bold tracking-tighter"
-                      >
-                        {plan.name === "Developer Portfolio"
-                          ? "Custom"
-                          : showUSD
-                          ? plan.usdPrice
-                          : plan.price}
-                      </motion.span>
-                    </AnimatePresence>
-                    {plan.period && plan.name !== "Developer Portfolio" && (
-                      <span
-                        className={`text-[14px] font-semibold tracking-wide ${
-                          isFeatured ? "text-white/50" : "text-gray-400"
-                        }`}
-                      >
-                        {plan.period}
-                      </span>
-                    )}
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-[24px] font-semibold text-white">₹</span>
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={isAnnual ? 'annual' : 'monthly'}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -5 }}
+                          transition={{ duration: 0.15 }}
+                          className="text-[40px] sm:text-[44px] font-bold text-white tracking-tight"
+                        >
+                          {isAnnual ? plan.priceAnnual : plan.priceMonthly}
+                        </motion.span>
+                      </AnimatePresence>
+                      <span className="text-[14px] font-medium text-neutral-400">/mo</span>
+                    </div>
+                    
+                    <div className="h-6 mt-1">
+                      <AnimatePresence>
+                        {isAnnual && (
+                          <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="text-[13px] text-neutral-500"
+                          >
+                            Billed as ₹{plan.billedAnnual}/yr
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
                   </div>
 
-                  {/* CTA Button */}
-                  <motion.button
-                    whileTap={{ scale: 0.98 }}
-                    className={`w-full py-4 rounded-xl font-bold text-[15px] mb-10 flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden relative group ${
-                      isFeatured
-                        ? "bg-white text-gray-900 hover:shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                        : "bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg"
-                    }`}
-                  >
-                    <span className="relative z-10">{plan.name === "Developer Portfolio" ? "Contact Sales" : "Get Started"}</span>
-                    <ArrowRight className="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" />
-                  </motion.button>
+                  {/* Best For Section */}
+                  <div className="mb-8">
+                    <div className="text-[11px] font-bold tracking-widest uppercase text-[#c1a18c] mb-3">
+                      BEST FOR
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {plan.bestFor.map((item) => (
+                        <div key={item} className="px-3 py-1.5 rounded-md bg-[#50372b]/40 border border-[#50372b] text-[12px] font-medium text-[#f5ece5]">
+                          {item}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   {/* Features List */}
-                  <div className="flex-1">
-                    <div className={`text-[12px] font-bold tracking-widest uppercase mb-6 ${
-                      isFeatured ? "text-white/40" : "text-gray-400"
-                    }`}>
-                      What's included
-                    </div>
-                    <ul className="space-y-4">
+                  <div className="flex-1 mb-8">
+                    <ul className="space-y-3.5">
                       {plan.features.map((feature, i) => (
-                        <motion.li
-                          key={feature}
-                          initial={false}
-                          animate={isHovered ? { x: 4 } : { x: 0 }}
-                          transition={{ duration: 0.3, delay: i * 0.05 }}
-                          className={`flex items-start gap-3 text-[14px] font-medium leading-snug ${
-                            isFeatured ? "text-white/80" : "text-gray-600"
-                          }`}
+                        <li
+                          key={i}
+                          className="flex items-start gap-3"
                         >
-                          <div className={`mt-0.5 rounded-full p-0.5 shrink-0 ${
-                            isFeatured ? "bg-[#F26522]/20 text-[#F26522]" : "bg-gray-100 text-gray-900"
-                          }`}>
-                            <Check className="w-3.5 h-3.5" />
+                          <div className={`mt-[2px] shrink-0`}>
+                            {feature.included ? (
+                              <Check className="w-[18px] h-[18px] text-[#10b981]" />
+                            ) : (
+                              <Minus className="w-[18px] h-[18px] text-[#785340]" />
+                            )}
                           </div>
-                          {feature}
-                        </motion.li>
+                          <span className={`text-[14px] leading-snug ${
+                            feature.included ? "text-[#fdf8f5]" : "text-[#936850]"
+                          }`}>
+                            {feature.name}
+                          </span>
+                        </li>
                       ))}
                     </ul>
                   </div>
+
+                  {/* CTA Button */}
+                  <button
+                    className={`w-full py-3.5 rounded-xl font-semibold text-[14px] flex items-center justify-center gap-2 transition-all duration-300 group ${
+                      plan.buttonType === "filled"
+                        ? "bg-[#F26522] hover:bg-[#e05a1a] text-white shadow-[0_4px_14px_rgba(242,101,34,0.3)]"
+                        : "bg-[#50372b]/20 border border-[#50372b] hover:border-[#785340] hover:bg-[#50372b]/40 text-[#fdf8f5]"
+                    }`}
+                  >
+                    {plan.buttonText}
+                    <ArrowUpRight className="w-4 h-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </button>
+
                 </div>
               </motion.div>
             );
           })}
         </div>
+
       </div>
     </section>
   );
