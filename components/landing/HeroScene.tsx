@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, useDetectGPU } from "@react-three/drei";
 import * as THREE from "three";
@@ -121,7 +121,9 @@ function WireframeHouse({ mouse }: { mouse: React.RefObject<{ x: number; y: numb
 function Particles({ count = 60 }: { count?: number }) {
   const points = useRef<THREE.Points>(null);
 
-  const { geometry, velocities } = useMemo(() => {
+  const [data, setData] = useState<{ geometry: THREE.BufferGeometry; velocities: Float32Array } | null>(null);
+
+  useEffect(() => {
     const positions = new Float32Array(count * 3);
     const vels = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
@@ -134,17 +136,18 @@ function Particles({ count = 60 }: { count?: number }) {
     }
     const geo = new THREE.BufferGeometry();
     geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    return { geometry: geo, velocities: vels };
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setData({ geometry: geo, velocities: vels });
   }, [count]);
 
   useFrame(() => {
-    if (!points.current) return;
+    if (!points.current || !data) return;
     const pos = points.current.geometry.attributes.position;
     const arr = pos.array as Float32Array;
     for (let i = 0; i < count; i++) {
-      arr[i * 3] += velocities[i * 3];
-      arr[i * 3 + 1] += velocities[i * 3 + 1];
-      arr[i * 3 + 2] += velocities[i * 3 + 2];
+      arr[i * 3] += data.velocities[i * 3];
+      arr[i * 3 + 1] += data.velocities[i * 3 + 1];
+      arr[i * 3 + 2] += data.velocities[i * 3 + 2];
       if (arr[i * 3 + 1] > 5) {
         arr[i * 3 + 1] = -4;
         arr[i * 3] = (Math.random() - 0.5) * 12;
@@ -154,8 +157,10 @@ function Particles({ count = 60 }: { count?: number }) {
     pos.needsUpdate = true;
   });
 
+  if (!data) return null;
+
   return (
-    <points ref={points} geometry={geometry}>
+    <points ref={points} geometry={data.geometry}>
       <pointsMaterial
         size={0.02}
         color="#60a5fa"

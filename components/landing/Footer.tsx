@@ -40,7 +40,15 @@ const socials = [
   { icon: Play, href: "#", label: "YouTube" },
 ];
 
-const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg = "bg-white", iconIcon = ArrowRight }: any) => {
+interface AnimatedButtonProps {
+  text: string;
+  className?: string;
+  iconColor?: string;
+  iconBg?: string;
+  iconIcon?: React.ComponentType<{ className?: string }>;
+}
+
+const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg = "bg-white", iconIcon = ArrowRight }: AnimatedButtonProps) => {
   const Icon = iconIcon;
   return (
     <button className={`group flex items-center justify-between gap-3 pl-6 pr-2.5 py-2.5 rounded-full font-semibold text-[15px] ${className}`}>

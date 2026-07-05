@@ -2,11 +2,19 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Clock, Menu, X, ArrowRight, User, LayoutDashboard, CalendarCheck, LogOut, MessageCircle } from "lucide-react";
+import { Clock, Menu, X, ArrowRight, User, LayoutDashboard, LogOut, MessageCircle } from "lucide-react";
 import { WHATSAPP } from "@/lib/constants";
 import { getCurrentUser } from "@/lib/api/auth";
 
-const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg = "bg-white", iconIcon = ArrowRight }: any) => {
+interface AnimatedButtonProps {
+  text: string;
+  className?: string;
+  iconColor?: string;
+  iconBg?: string;
+  iconIcon?: React.ComponentType<{ className?: string }>;
+}
+
+const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg = "bg-white", iconIcon = ArrowRight }: AnimatedButtonProps) => {
   const Icon = iconIcon;
   return (
     <button className={`group flex items-center justify-between gap-3 pl-5 pr-2 py-2 rounded-full font-medium text-[13px] ${className}`}>
@@ -24,7 +32,7 @@ const AnimatedButton = ({ text, className = "", iconColor = "text-black", iconBg
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ full_name?: string; email: string; role?: string } | null>(null);
   const [time, setTime] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +91,7 @@ export default function Navbar() {
         {/* LEFT - Logo */}
         <div className="pointer-events-auto">
           <Link href="/" className="flex items-center">
-            <span className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-[#171717] drop-shadow-sm">Builder's Central</span>
+            <span className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-[#171717] drop-shadow-sm">Builder&apos;s Central</span>
           </Link>
         </div>
 

@@ -3,7 +3,13 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, Play, Box, Camera, Maximize2 } from "lucide-react";
-import Image from "next/image";
+interface AnimatedButtonProps {
+  text: string;
+  className?: string;
+  iconColor?: string;
+  iconBg?: string;
+  iconIcon?: React.ComponentType<{ className?: string }>;
+}
 
 const AnimatedButton = ({
   text,
@@ -11,7 +17,7 @@ const AnimatedButton = ({
   iconColor = "text-black",
   iconBg = "bg-white",
   iconIcon = ArrowRight,
-}: any) => {
+}: AnimatedButtonProps) => {
   const Icon = iconIcon;
   return (
     <button

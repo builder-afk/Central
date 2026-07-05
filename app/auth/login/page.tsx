@@ -33,8 +33,8 @@ export default function LoginPage() {
       const { access_token } = await login({ email, password });
       localStorage.setItem("houseverse_token", access_token);
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Invalid credentials");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid credentials");
     } finally {
       setLoading(false);
     }

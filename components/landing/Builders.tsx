@@ -15,7 +15,15 @@ import {
 } from "lucide-react";
 import { useBuilderStore } from "@/store/useBuilderStore";
 
-const AnimatedButton = ({ text, className = "", iconColor = "text-white", iconBg = "bg-white/20", iconIcon = ArrowRight }: any) => {
+interface AnimatedButtonProps {
+  text: string;
+  className?: string;
+  iconColor?: string;
+  iconBg?: string;
+  iconIcon?: React.ComponentType<{ className?: string }>;
+}
+
+const AnimatedButton = ({ text, className = "", iconColor = "text-white", iconBg = "bg-white/20", iconIcon = ArrowRight }: AnimatedButtonProps) => {
   const Icon = iconIcon;
   return (
     <button className={`group flex items-center justify-between gap-3 pl-5 pr-2 py-2 rounded-full font-medium text-[14px] ${className}`}>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, Variants } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { 
   CalendarCheck, 
   MapPin, 
@@ -119,9 +120,9 @@ export default function UserDashboard() {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
               return (
-                <button
+                  <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => setActiveTab(tab.id as "visits" | "quotes" | "saved")}
                   className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-all ${
                     isActive 
                       ? "bg-slate-900 text-white shadow-md" 
@@ -148,8 +149,8 @@ export default function UserDashboard() {
                 <h2 className="text-xl font-semibold text-slate-900">Upcoming Visits</h2>
                 {upcomingVisits.map((visit) => (
                   <motion.div key={visit.id} variants={itemVariants} className="bg-white rounded-[1.5rem] p-6 border border-slate-200 shadow-sm hover:shadow-md transition-shadow group flex flex-col md:flex-row gap-6">
-                    <div className="w-full md:w-48 h-32 rounded-xl overflow-hidden shrink-0">
-                      <img src={visit.image} alt="Project" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <div className="w-full md:w-48 h-32 rounded-xl overflow-hidden shrink-0 relative">
+                      <Image src={visit.image} alt="Project" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
                       <div className="flex justify-between items-start mb-2">

@@ -82,15 +82,18 @@ export default function CostEstimator() {
   // Debounced estimate fetching
   useEffect(() => {
     const controller = new AbortController();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
 
     const timeoutId = setTimeout(async () => {
       try {
         const data = await fetchEstimate(inputs, controller.signal);
         setEstimate(data);
-      } catch (err: any) {
-        if (err.name !== "AbortError") {
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== "AbortError") {
           console.error("Estimation failed:", err);
+        } else if (err instanceof Error === false) {
+           console.error("Estimation failed:", err);
         }
       } finally {
         setIsLoading(false);

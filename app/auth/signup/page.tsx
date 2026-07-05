@@ -55,8 +55,8 @@ export default function SignupPage() {
 
       await signup(signupData);
       setStep(2);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong during signup");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Something went wrong during signup");
     } finally {
       setLoading(false);
     }

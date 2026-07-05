@@ -1,6 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api/v1";
 
-export async function signup(data: Record<string, any>) {
+export async function signup(data: Record<string, string | undefined>) {
   const response = await fetch(`${API_URL}/auth/signup`, {
     method: "POST",
     headers: {
@@ -17,7 +17,7 @@ export async function signup(data: Record<string, any>) {
   return response.json();
 }
 
-export async function login(data: Record<string, any>) {
+export async function login(data: Record<string, string>) {
   // FastAPI OAuth2PasswordRequestForm expects form data (x-www-form-urlencoded)
   const formData = new URLSearchParams();
   formData.append("username", data.email);

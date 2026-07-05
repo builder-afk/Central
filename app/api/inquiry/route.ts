@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import crypto from "crypto";
-
 function generateRefNumber() {
   const timestamp = Date.now().toString();
   const shortUuid = crypto.randomUUID().replace(/-/g, "").substring(0, 4).toUpperCase();

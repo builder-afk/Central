@@ -9,8 +9,22 @@ import Footer from "@/components/landing/Footer";
 import { properties } from "@/data/properties";
 import PropertyCard from "@/components/properties/PropertyCard";
 
+interface CategoryInfo {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  tagline: string;
+  description: string;
+  services: string[];
+  subscriptions: Array<{
+    name: string;
+    price: string;
+    features: string[];
+    recommended?: boolean;
+  }>;
+}
+
 // Mock data for categories
-const categoryData: Record<string, any> = {
+const categoryData: Record<string, CategoryInfo> = {
   buy: {
     title: "Buy a Home",
     icon: Home,
@@ -261,7 +275,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                 <Search className="w-8 h-8 text-[#50372b]/40" />
               </div>
               <h3 className="text-xl font-semibold text-[#50372b] mb-2">No listings found</h3>
-              <p className="text-[#50372b]/60">We couldn't find any properties in this category at the moment. Check back later!</p>
+              <p className="text-[#50372b]/60">We couldn&apos;t find any properties in this category at the moment. Check back later!</p>
             </div>
           )}
         </section>
