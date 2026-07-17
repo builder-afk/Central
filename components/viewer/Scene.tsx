@@ -52,6 +52,8 @@ function SceneContent() {
         scale={30}
         blur={2}
         far={10}
+        frames={1}
+        resolution={256}
       />
 
       {/* Grid */}

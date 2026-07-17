@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Heart, MapPin, Eye, Building2 } from "lucide-react";
+import { X, Heart, MapPin, Eye, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import { BuilderProject } from "@/store/useBuilderStore";
 
 interface PortfolioGridProps {
@@ -70,7 +70,7 @@ function ProjectItem({ project, index, onSelect }: { project: BuilderProject; in
   );
 }
 
-function Lightbox({ project, onClose }: { project: BuilderProject; onClose: () => void }) {
+function Lightbox({ project, onClose, onNext, onPrev }: { project: BuilderProject; onClose: () => void; onNext: () => void; onPrev: () => void; }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -87,12 +87,25 @@ function Lightbox({ project, onClose }: { project: BuilderProject; onClose: () =
         className="relative w-full max-w-4xl bg-white rounded-[2rem] overflow-hidden shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 transition-colors z-10"
+          className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 transition-colors z-20"
         >
           <X className="w-5 h-5" />
+        </button>
+
+        <button
+          onClick={(e) => { e.stopPropagation(); onPrev(); }}
+          className="absolute top-1/2 left-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 hover:scale-110 transition-all z-20"
+        >
+          <ChevronLeft className="w-6 h-6 sm:w-8 sm:h-8" />
+        </button>
+
+        <button
+          onClick={(e) => { e.stopPropagation(); onNext(); }}
+          className="absolute top-1/2 right-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-black/40 hover:scale-110 transition-all z-20"
+        >
+          <ChevronRight className="w-6 h-6 sm:w-8 sm:h-8" />
         </button>
 
         {/* Project Visual */}
@@ -144,6 +157,22 @@ export default function PortfolioGrid({ projects, variant = "masonry" }: Portfol
     setSelectedProject(project);
   }, []);
 
+  const selectedIndex = selectedProject ? projects.findIndex(p => p.id === selectedProject.id) : -1;
+
+  const handleNext = useCallback(() => {
+    if (selectedIndex >= 0) {
+      const nextIndex = (selectedIndex + 1) % projects.length;
+      setSelectedProject(projects[nextIndex]);
+    }
+  }, [selectedIndex, projects]);
+
+  const handlePrev = useCallback(() => {
+    if (selectedIndex >= 0) {
+      const prevIndex = (selectedIndex - 1 + projects.length) % projects.length;
+      setSelectedProject(projects[prevIndex]);
+    }
+  }, [selectedIndex, projects]);
+
   return (
     <>
       <div className={variant === "masonry" ? "masonry-grid" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"}>
@@ -163,6 +192,8 @@ export default function PortfolioGrid({ projects, variant = "masonry" }: Portfol
           <Lightbox
             project={selectedProject}
             onClose={() => setSelectedProject(null)}
+            onNext={handleNext}
+            onPrev={handlePrev}
           />
         )}
       </AnimatePresence>

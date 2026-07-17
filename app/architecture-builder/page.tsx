@@ -13,10 +13,8 @@ export default function ArchitectureBuilderPage() {
 
   const { completion, complete, isLoading } = useCompletion({
     api: "/api/architect",
-    onResponse: () => {
-      setIsGenerating(false)
-    },
     onFinish: () => {
+      setIsGenerating(false)
       setLoadingState("")
     }
   })

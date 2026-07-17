@@ -80,6 +80,8 @@ export default function BuildersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<ProfessionalCategory | "All">("All");
   const [trendingFilter, setTrendingFilter] = useState("All");
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [visibleProjectsCount, setVisibleProjectsCount] = useState(9);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Simulate loading
@@ -106,6 +108,15 @@ export default function BuildersPage() {
     return result;
   }, [getByCategory, selectedCategory, searchQuery]);
 
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(6);
+  }, [selectedCategory, searchQuery, searchLocation, searchBudget, searchType]);
+
+  useEffect(() => {
+    setVisibleProjectsCount(9);
+  }, [trendingFilter]);
+
   // Gather all projects for trending
   const allProjects = useMemo(() => {
     return filteredBuilders.flatMap((b) =>
@@ -122,7 +133,7 @@ export default function BuildersPage() {
     } else if (trendingFilter === "Modern Facades") {
       projects = projects.filter((p) => ["House", "Commercial", "Office"].includes(p.type));
     }
-    return projects.slice(0, 12);
+    return projects;
   }, [allProjects, trendingFilter]);
 
   const scrollCarousel = (dir: "left" | "right") => {
@@ -396,7 +407,18 @@ export default function BuildersPage() {
             ))}
           </div>
 
-          <PortfolioGrid projects={trendingProjects} variant="masonry" />
+          <PortfolioGrid projects={trendingProjects.slice(0, visibleProjectsCount)} variant="masonry" />
+
+          {visibleProjectsCount < trendingProjects.length && (
+            <div className="mt-12 flex justify-center">
+              <button
+                onClick={() => setVisibleProjectsCount((prev) => prev + 9)}
+                className="px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-700 font-semibold text-[14px] hover:border-[#F26522]/30 hover:text-[#F26522] hover:shadow-md hover:-translate-y-1 transition-all"
+              >
+                View More Projects
+              </button>
+            </div>
+          )}
         </motion.section>
 
         {/* ─── COST ESTIMATOR ─── */}
@@ -429,11 +451,22 @@ export default function BuildersPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
-              {filteredBuilders.map((builder, i) => (
+              {filteredBuilders.slice(0, visibleCount).map((builder, i) => (
                 <BuilderCard key={builder.id} builder={builder} index={i} variant="grid" />
               ))}
             </AnimatePresence>
           </div>
+
+          {visibleCount < filteredBuilders.length && (
+            <div className="mt-12 flex justify-center">
+              <button
+                onClick={() => setVisibleCount((prev) => prev + 6)}
+                className="px-8 py-3.5 rounded-full bg-white border border-gray-200 text-gray-700 font-semibold text-[14px] hover:border-[#F26522]/30 hover:text-[#F26522] hover:shadow-md hover:-translate-y-1 transition-all"
+              >
+                View More Professionals
+              </button>
+            </div>
+          )}
         </motion.section>
       </div>
     </div>

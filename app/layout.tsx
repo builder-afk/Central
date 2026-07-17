@@ -49,6 +49,8 @@ export const metadata: Metadata = {
   },
 };
 
+import Footer from "@/components/ui/Footer";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -62,6 +64,7 @@ export default function RootLayout({
       <body className="min-h-screen noise-overlay">
         <LenisProvider>
           {children}
+          <Footer />
           <WhatsAppButton />
         </LenisProvider>
       </body>

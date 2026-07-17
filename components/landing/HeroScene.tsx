@@ -2,7 +2,7 @@
 
 import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, useDetectGPU } from "@react-three/drei";
+import { Float } from "@react-three/drei";
 import * as THREE from "three";
 import { Suspense } from "react";
 
@@ -174,8 +174,7 @@ function Particles({ count = 60 }: { count?: number }) {
 
 /* ─── Scene wrapper ─── */
 function SceneContent({ mouse }: { mouse: React.RefObject<{ x: number; y: number }> }) {
-  const gpu = useDetectGPU();
-  const particleCount = gpu?.tier && gpu.tier < 2 ? 30 : 60;
+  const particleCount = 40;
 
   return (
     <>
